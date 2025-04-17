@@ -1,4 +1,4 @@
-# ⚠️This is simply a hobby project ⚠️
+⚠️This is simply a hobby project ⚠️
 
 # Playlist-Downloader
 A python CLI script for Spotipy and yt-dlp to automatically list all your spotify playlists and download them as MP3's from youtube.
