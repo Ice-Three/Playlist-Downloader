@@ -1,12 +1,13 @@
 ⚠️This is simply a hobby project ⚠️
 
 # Playlist-Downloader
-A python CLI script for Spotipy and yt-dlp to automatically list all your spotify playlists and download them as MP3's from youtube.
+This is a script for the purpose of downloading Youtube Videos, Youtube Playlists, Spotify Playlists and Spotify Albums as MP3's.
+The script is made in Python with the help of Spotipy and Yt_dlp.
 
 ## Table of Contents
-- [Prerequisites](#Prerequisites)
-- [Setup](#Setup)
-- [Usage](#Usage)
+- [Prerequisites](##Prerequisites)
+- [Setup](##Setup)
+- [Usage](##Usage)
 
 ## Prerequisites
 
@@ -36,9 +37,14 @@ python -m pip install -r requirements.txt
   - Add ``C:\ffmpeg\bin`` to the empty field and confirm with OK.
   - Run ``ffmpeg -version`` in CMD or Powershell to see if it is correctly added to PATH
 
+  **Linux & Mac**
+  - For linux, check your distro docs for installation and adding to PATH
+  - For Mac, check how to install with Homebrew or MacPorts
+
+
 - Insert the spotify Client ID and Client Secret into the script in the appropriate fields.
 
-  <sub> **Spotify ID is not required for Youtube downloads** </sub>
+   **Spotify ID is not required for Youtube downloads**
     
   This requires you to go to [Spotify for Developer](https://developer.spotify.com) and log in.
   Nagivate to the Dashboard and create a new app. 
@@ -51,7 +57,7 @@ python -m pip install -r requirements.txt
 Inside of the app, you will find your Client ID and Client Secret, these need to be added to the script for the script to be able to authenticate the account and be able to access Spotify.
 ## Usage
 
-Run the script, select the playlist you wish to download.
+Run the script by using the following command
 ```
 py /Path/To/Script/PlaylistDownloader.py
 ```
