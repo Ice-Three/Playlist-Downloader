@@ -4,16 +4,47 @@ from spotipy.oauth2 import SpotifyOAuth
 import os
 import re
 
-client_id="YOUR_CLIENT_ID"
-client_secret="YOUR_CLIENT_SECRET"
+# Spotify ID - Change it eventually to be written to a file after an input
+client_id="YOUR_CLIENT_ID_HERE"
+client_secret="YOUR_CLIENT_SECRET_HERE"
 
+#Opts for ydl_opts
+ydl_opts = {
+'format': 'bestaudio/best',
+'postprocessors': [
+    {
+        'key':'FFmpegExtractAudio',
+        'preferredcodec':'mp3',
+        'preferredquality':'320',
+    }],
+'paths': {'home': os.path.join(os.path.expanduser('~'), 'Downloads')},
+'quiet': False,
+#'verbose': True,
+#'embed-metadata': True,
+#'parse-metadata': 'title:%(artist|)s%(artist& - |)s%(title)s',
+######
+# Unable to get Metadata Embedding to work for ??? reason
+######
 
+# Definite spotify client for the purpose of dynamic scopes
+}
+def get_spotify_client(scope):
+    return spotipy.Spotify(auth_manager=SpotifyOAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri="http://127.0.0.1:8888/callback",
+        scope=scope
+    ))
 
+# Sanitize the filename
 def sanitize_filename(name):
     return re.sub(r'[<>:"/\\|?*]', '', name).strip()
 
+
+
+# Main 
 print("\nDo you want to download from Spotify or Youtube?")
-ChoiceOfService = int(input("\nSpotify(1) - Youtube(2) - Exit(0)"))
+ChoiceOfService = int(input("\nSpotify(1) - Youtube(2) - Exit(0) : "))
 
 
 if ChoiceOfService == 1:
@@ -22,14 +53,7 @@ if ChoiceOfService == 1:
 
     if ChoiceOfTask == 1: 
 
-        scope = "playlist-read-private"
-
-        sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-            client_id=client_id,
-            client_secret=client_secret,
-            redirect_uri="http://127.0.0.1:8888/callback",
-            scope=scope
-        ))
+        sp = get_spotify_client(scope = "playlist-read-private")
 
         playlists = sp.current_user_playlists()
         playlist_list = []
@@ -64,19 +88,8 @@ if ChoiceOfService == 1:
 
 
         playlist_folder = sanitize_filename(selected_playlist['name'])
+        ydl_opts['outtmpl'] = os.path.join(os.path.expanduser('~'), 'Downloads', f'{playlist_folder}', '%(title)s.%(ext)s')
 
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key':'FFmpegExtractAudio',
-                'preferredcodec':'mp3',
-                'preferredquality':'320',
-            }],
-            'outtmpl': f'{playlist_folder}/%(title)s.%(ext)s',
-            'paths': {'home': os.path.expanduser('~/Downloads')},
-            'quiet': False,
-            'noplaylist': True,
-        }
 
         with YoutubeDL(ydl_opts) as ydl:
             for track in tracks:
@@ -91,14 +104,7 @@ if ChoiceOfService == 1:
 
 
     elif ChoiceOfTask == 2:
-        scope = "user-library-read"
-
-        sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-            client_id=client_id,
-            client_secret=client_secret,
-            redirect_uri="http://127.0.0.1:8888/callback",
-            scope=scope
-        ))
+        sp = get_spotify_client(scope = "user-library-read")
 
         album_link = str(input("\nPlease put in the album link: "))
         album_tracks = sp.album_tracks(album_link)
@@ -114,19 +120,8 @@ if ChoiceOfService == 1:
             tracks.append({'name': track_name, 'artists': artist_names})
 
         album_folder = sanitize_filename(album_name['name'])
-
-        ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key':'FFmpegExtractAudio',
-            'preferredcodec':'mp3',
-            'preferredquality':'320',
-        }],
-        'outtmpl': f'{album_folder}/%(title)s.%(ext)s',
-        'paths': {'home': os.path.expanduser('~/Downloads')},
-        'quiet': False,
-        'noplaylist': True,
-    }
+        ydl_opts['outtmpl'] = os.path.join(os.path.expanduser('~'), 'Downloads', f'{album_folder}', '%(title)s.%(ext)s')
+        
         with YoutubeDL(ydl_opts) as ydl:
             for track in tracks:
                 try:
@@ -142,16 +137,6 @@ if ChoiceOfService == 1:
         exit()
 
 if ChoiceOfService == 2:
-    ydl_opts = {
-    'format': 'bestaudio/best',
-    'postprocessors': [{
-        'key':'FFmpegExtractAudio',
-        'preferredcodec':'mp3',
-        'preferredquality':'320',
-    }],
-    'paths': {'home': os.path.expanduser('~/Downloads')},
-    'quiet': False,
-}
     link = str(input("Input the youtube link:" ))
     try:
         with YoutubeDL(ydl_opts) as ydl:
@@ -161,10 +146,10 @@ if ChoiceOfService == 2:
             playlist_title = info_dict.get('title', 'Untitled Playlist')
             playlist_folder = sanitize_filename(playlist_title)
 
-            ydl_opts['outtmpl'] = f'{playlist_folder}/%(title)s.%(ext)s'
+            ydl_opts['outtmpl'] = os.path.join(os.path.expanduser('~'), 'Downloads', f'{playlist_folder}', '%(title)s.%(ext)s')
         
         else:
-            ydl_opts['outtmpl'] = os.path.expanduser('~Downloads/%(title)s.%(ext)s')
+            ydl_opts['outtmpl'] = os.path.join(os.path.expanduser('~'), 'Downloads', '%(title)s.%(ext)s')
 
         with YoutubeDL(ydl_opts) as ydl:
                 ydl.download([link])
