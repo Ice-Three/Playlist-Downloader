@@ -5,9 +5,9 @@ This is a script for the purpose of downloading Youtube Videos, Youtube Playlist
 The script is made in Python with the help of Spotipy and Yt_dlp.
 
 ## Table of Contents
-- [Prerequisites](##Prerequisites)
-- [Setup](##Setup)
-- [Usage](##Usage)
+- [Prerequisites](#Prerequisites)
+- [Setup](#Setup)
+- [Usage](#Usage)
 
 ## Prerequisites
 
